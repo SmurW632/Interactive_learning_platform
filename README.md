@@ -10,3 +10,6 @@
 
 ### Wiki
 База знаний (главная) - https://app.weeek.net/s/glavnaya-document-OTIyMjQxfGExM2JkZDA5LWY2NjMtNGE3NS04OGU3LTlhMzk3OTYyN2E4NA==
+
+### Flip
+UserFlow - https://flip-chart.ru/app/board?spaceId=01K78VK4D52KCS2CEDD9J4R1MD&teamId=01K78VK4E09N983210FMM47HQQ&flipId=01KJH0FKQ2Z56Q5875BBF0GVZN
