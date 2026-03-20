@@ -1,0 +1,42 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# C# / ASP.NET Core
+[*.{cs,cshtml,json,xml}]
+indent_size = 4
+
+# Vue / JavaScript / TypeScript
+[*.{vue,js,ts,jsx,tsx}]
+indent_size = 2
+
+# CSS / SCSS / SASS
+[*.{css,scss,sass,less}]
+indent_size = 2
+
+# YAML / YML
+[*.{yaml,yml}]
+indent_size = 2
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+indent_size = 2
+
+# Dockerfile
+[*.{Dockerfile,dockerfile}]
+indent_size = 2
+
+# Git
+[*.{gitattributes,gitignore}]
+indent_size = 2
+
+# Solution files
+[*.sln]
+indent_style = tab
