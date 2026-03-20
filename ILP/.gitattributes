@@ -1,0 +1,35 @@
+# Автоматическая нормализация окончаний строк
+* text=auto
+
+# C# файлы
+*.cs text diff=csharp
+
+# Vue файлы
+*.vue text
+
+# JS/TS файлы
+*.js text diff=javascript
+*.ts text diff=typescript
+
+# JSON/XML
+*.json text
+*.xml text
+
+# Бинарные файлы
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+
+# Файлы решений и проектов
+*.sln text eol=crlf
+*.csproj text eol=crlf
+*.fsproj text eol=crlf
+*.vbproj text eol=crlf
+
+# Dockerfile
+Dockerfile text
