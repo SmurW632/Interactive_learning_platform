@@ -1,0 +1,26 @@
+{
+    "recommendations": [
+        // C# / .NET
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        
+        // Vue
+        "vue.volar",
+        "vue.vscode-typescript-vue-plugin",
+        
+        // Общие
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
+        "mikestead.dotenv",
+        "christian-kohler.path-intellisense",
+        "formulahendry.auto-rename-tag",
+        
+        // Docker
+        
+        // Тестирование
+        
+        // Git
+    ]
+}
