@@ -12,7 +12,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var result = "Good!";
+            var result = "Good";
             return Ok(result);
         }
         catch (Exception ex)
