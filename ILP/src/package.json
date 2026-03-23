@@ -1,0 +1,24 @@
+{
+  "name": "interaction_lerning_platform",
+  "version": "1.0.0",
+  "description": "Интерактивная платформа для обучения",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\" --kill-others --prefix \"{time} [{name}]\"",
+    "dev-server": "cd server && dotnet watch run",
+    "dev-client": "cd client/ilp.client && npm run serve",
+    "dev-server-only": "cd /ILP/src/server && dotnet run",
+    "dev-client-only": "cd /ILP/src/client/ilp.client && npm run serve",
+    "install-all": "npm install && cd server && dotnet restore && cd ../client/ilp.client && npm install",
+    "build": "cd client/ilp.client && npm run build",
+    "test": "cd server && dotnet test && cd ../client/ilp.client && npm run test",
+    "clean": "rm -rf node_modules server/bin server/obj client/ilp.client/node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

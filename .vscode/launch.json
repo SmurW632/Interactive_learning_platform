@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Backend",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "start-backend",
+            "program": "${workspaceFolder}/ILP/src/server/bin/Debug/net10.0/server.dll",
+            "cwd": "${workspaceFolder}/ILP/src/server",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack",
+            "configurations": ["Debug Backend"],
+            "preLaunchTask": "start-frontend"
+        }
+    ]
+}
