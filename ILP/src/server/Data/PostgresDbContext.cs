@@ -18,12 +18,10 @@ namespace server.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // User configuration
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            // Course configuration
             modelBuilder.Entity<Course>()
                 .HasIndex(c => c.Slug)
                 .IsUnique();
@@ -32,22 +30,18 @@ namespace server.Data
                 .Property(c => c.Level)
                 .HasConversion<string>();
 
-            // Enrollment unique constraint
             modelBuilder.Entity<Enrollment>()
                 .HasIndex(e => new { e.UserId, e.CourseId })
                 .IsUnique();
 
-            // LessonProgress unique constraint
             modelBuilder.Entity<LessonProgress>()
                 .HasIndex(lp => new { lp.EnrollmentId, lp.LessonId })
                 .IsUnique();
 
-            // Review unique constraint
             modelBuilder.Entity<Review>()
                 .HasIndex(r => new { r.UserId, r.CourseId })
                 .IsUnique();
 
-            // Configure relationships
             modelBuilder.Entity<Course>()
                 .HasOne(c => c.Creator)
                 .WithMany()
