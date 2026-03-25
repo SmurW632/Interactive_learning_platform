@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.DbContexts;
 using server.Models.ILP;
 
 namespace server.Data.Repositories;
@@ -10,7 +11,7 @@ public interface ILessonProgressRepository : IRepository<LessonProgress>
     Task<int> GetCompletedLessonsCountAsync(Guid enrollmentId, CancellationToken cancellationToken = default);
 }
 
-public class LessonProgressRepository(PostgresDbContext context) : Repository<LessonProgress>(context), ILessonProgressRepository
+public class LessonProgressRepository(BaseDbContext context) : Repository<LessonProgress>(context), ILessonProgressRepository
 {
     public async Task<LessonProgress?> GetByEnrollmentAndLessonAsync(Guid enrollmentId, Guid lessonId, CancellationToken cancellationToken = default)
     {

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.DbContexts;
 using server.Models.ILP;
 
 namespace server.Data.Repositories;
@@ -11,7 +12,7 @@ public interface ICourseRepository : IRepository<Course>
     Task<double> GetAverageRatingAsync(Guid courseId, CancellationToken cancellationToken = default);
 }
 
-public class CourseRepository(PostgresDbContext context) : Repository<Course>(context), ICourseRepository
+public class CourseRepository(BaseDbContext context) : Repository<Course>(context), ICourseRepository
 {
     public async Task<IEnumerable<Course>> GetPublishedCoursesAsync(CancellationToken cancellationToken = default)
     {

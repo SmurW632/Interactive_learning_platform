@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.DbContexts;
 using server.Models.ILP;
 
 namespace server.Data.Repositories;
@@ -11,7 +12,7 @@ public interface IUserRepository : IRepository<User>
     Task UpdateLastActiveAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
-public class UserRepository(PostgresDbContext context) : Repository<User>(context), IUserRepository
+public class UserRepository(BaseDbContext context) : Repository<User>(context), IUserRepository
 {
     public async Task<bool> AnyEmailAsync(string email, CancellationToken cancellationToken = default)
     {

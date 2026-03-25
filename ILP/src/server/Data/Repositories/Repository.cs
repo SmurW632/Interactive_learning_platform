@@ -1,13 +1,25 @@
+// server/Data/Repositories/Repository.cs
 using Microsoft.EntityFrameworkCore;
+using server.Data.DbContexts;
 
 namespace server.Data.Repositories;
 
+public interface IRepository<T> where T : class
+{
+    Task<IEnumerable<T>> GetListAsync(CancellationToken cancellationToken = default);
+    Task<T?> GetAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
+    Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
+}
+
 public abstract class Repository<T> : IRepository<T> where T : class
 {
-    protected readonly PostgresDbContext _context;
+    protected readonly BaseDbContext _context;
     protected readonly DbSet<T> _dbSet;
 
-    protected Repository(PostgresDbContext context)
+    protected Repository(BaseDbContext context)
     {
         _context = context;
         _dbSet = context.Set<T>();
