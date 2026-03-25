@@ -5,71 +5,40 @@ namespace server.Data.Repositories;
 
 public interface IUserRepository : IRepository<User>
 {
-
+    Task<bool> AnyEmailAsync(string email, CancellationToken cancellationToken = default);
+    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
+    Task<User?> GetWithEnrollmentsAsync(Guid id, CancellationToken cancellationToken = default);
+    Task UpdateLastActiveAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
-public class UserRepository : IUserRepository
+public class UserRepository(PostgresDbContext context) : Repository<User>(context), IUserRepository
 {
-
-    private bool disposed = false;
-    private readonly PostgresDbContext _db;
-    private readonly IConfiguration _configuration;
-
-    public UserRepository(PostgresDbContext db, IConfiguration configuration)
+    public async Task<bool> AnyEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        _db = db;
-        _configuration = configuration;
+        return await _dbSet.AnyAsync(u => u.Email == email, cancellationToken);
     }
 
-    public async Task<IEnumerable<User>> GetListAsync()
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await _db.Users.ToListAsync();
+        return await _dbSet.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
-    public async Task<User> GetAsync(Guid id)
+    public async Task<User?> GetWithEnrollmentsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == id);
-        if (user != null) return user;
-
-        return new User();
+        return await _dbSet
+            .Include(u => u.Enrollments)
+                .ThenInclude(e => e.Course)
+            .Include(u => u.Reviews)
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
-    public async void UpdateAsync(User user)
+    public async Task UpdateLastActiveAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var getUser = await GetAsync(user.Id);
-        _db.Entry(getUser).State = EntityState.Modified;
-    }
-
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        var user = await GetAsync(id);
+        var user = await GetAsync(userId, cancellationToken);
         if (user != null)
         {
-            _db.Users.Remove(user);
-            return true;
+            user.LastActiveAt = DateTime.UtcNow;
+            await UpdateAsync(user, cancellationToken);
         }
-        return false;
-    }
-
-    public async void SaveAsync()
-    {
-        await _db.SaveChangesAsync();
-    }
-
-    public virtual void Dispose(bool disposing)
-    {
-        if (!this.disposed)
-        {
-            if (disposing)
-            {
-                _db.Dispose();
-            }
-        }
-        this.disposed = true;
-    }
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 }
