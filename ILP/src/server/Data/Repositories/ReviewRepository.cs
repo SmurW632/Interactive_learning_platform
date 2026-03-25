@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.DbContexts;
 using server.Models.ILP;
 
 namespace server.Data.Repositories;
@@ -10,7 +11,7 @@ public interface IReviewRepository : IRepository<Review>
     Task<bool> HasUserReviewedAsync(Guid userId, Guid courseId, CancellationToken cancellationToken = default);
 }
 
-public class ReviewRepository(PostgresDbContext context) : Repository<Review>(context), IReviewRepository
+public class ReviewRepository(BaseDbContext context) : Repository<Review>(context), IReviewRepository
 {
     public async Task<IEnumerable<Review>> GetApprovedReviewsByCourseAsync(Guid courseId, CancellationToken cancellationToken = default)
     {

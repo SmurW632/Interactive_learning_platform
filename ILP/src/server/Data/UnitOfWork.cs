@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.DbContexts;
 using server.Data.Repositories;
 
 namespace server.Data;
@@ -21,7 +22,7 @@ public interface IUnitOfWork : IDisposable
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly PostgresDbContext _context;
+    private readonly BaseDbContext _context;
     private IUserRepository? _users;
     private ICourseRepository? _courses;
     private IModuleRepository? _modules;
@@ -32,7 +33,7 @@ public class UnitOfWork : IUnitOfWork
 
     private Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? _transaction;
 
-    public UnitOfWork(PostgresDbContext context)
+    public UnitOfWork(BaseDbContext context)
     {
         _context = context;
     }
@@ -57,12 +58,14 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
     {
-        await _transaction?.CommitAsync(cancellationToken);
+        if (_transaction != null)
+            await _transaction.CommitAsync(cancellationToken);
     }
 
     public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
     {
-        await _transaction?.RollbackAsync(cancellationToken);
+        if (_transaction != null)
+            await _transaction.RollbackAsync(cancellationToken);
     }
 
     public void Dispose()

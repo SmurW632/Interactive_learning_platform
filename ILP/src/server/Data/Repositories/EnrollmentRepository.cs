@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.DbContexts;
 using server.Models.ILP;
 
 namespace server.Data.Repositories;
@@ -11,7 +12,7 @@ public interface IEnrollmentRepository : IRepository<Enrollment>
     Task UpdateProgressPercentAsync(Guid enrollmentId, CancellationToken cancellationToken = default);
 }
 
-public class EnrollmentRepository(PostgresDbContext context) : Repository<Enrollment>(context), IEnrollmentRepository
+public class EnrollmentRepository(BaseDbContext context) : Repository<Enrollment>(context), IEnrollmentRepository
 {
     public async Task<Enrollment?> GetUserEnrollmentAsync(Guid userId, Guid courseId, CancellationToken cancellationToken = default)
     {

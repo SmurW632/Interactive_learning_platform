@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.DbContexts;
 using server.Models.ILP;
 
 namespace server.Data.Repositories;
@@ -9,7 +10,7 @@ public interface ILessonRepository : IRepository<Lesson>
     Task<Lesson?> GetLessonWithModuleAsync(Guid lessonId, CancellationToken cancellationToken = default);
 }
 
-public class LessonRepository(PostgresDbContext context) : Repository<Lesson>(context), ILessonRepository
+public class LessonRepository(BaseDbContext context) : Repository<Lesson>(context), ILessonRepository
 {
     public async Task<IEnumerable<Lesson>> GetLessonsByModuleAsync(Guid moduleId, CancellationToken cancellationToken = default)
     {
