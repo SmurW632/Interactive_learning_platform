@@ -5,6 +5,7 @@
 project/
 ├── backend/               # ASP.NET Core проект
 │   ├── Api/
+│   ├── Services/
 │   ├── Tests/
 │   └── Dockerfile
 ├── frontend/              # Vue.js проект
