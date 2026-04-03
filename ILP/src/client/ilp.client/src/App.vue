@@ -1,18 +1,12 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <TestConnectionServer msg="Welcome to Your Vue.js App" />
+  <div id="app">
+    <nav>
+      <router-link to="/">Главная</router-link> |
+      <router-link to="/profile">Профиль</router-link>
+    </nav>
+    <router-view />
+  </div>
 </template>
-
-<script>
-import TestConnectionServer from "./components/TestConnectionServer.vue";
-
-export default {
-  name: "App",
-  components: {
-    TestConnectionServer,
-  },
-};
-</script>
 
 <style>
 #app {
