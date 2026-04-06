@@ -7,6 +7,7 @@ using Microsoft.OpenApi;
 using server.Data;
 using server.Data.DbContexts;
 using server.Services;
+using server.Services.PythonResearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddHttpClient<IPythonResearchService, PythonResearchService>();
+// builder.Services.AddScoped<IAuthService, AuthService>();
 // builder.Services.AddScoped<ICourseService, CourseService>();
 // builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 // builder.Services.AddScoped<IProgressService, ProgressService>();

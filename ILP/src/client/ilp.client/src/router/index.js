@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
@@ -23,12 +23,17 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: () => import('../views/ProfileView.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true } // защищенный маршрут
+  },
+  {
+    path: '/research',
+    name: 'research',
+    component: () => import('../components/ResearchView.vue'),
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(process.env.BASE_URL),
   routes
 })
 
