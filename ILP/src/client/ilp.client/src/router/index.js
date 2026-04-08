@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const routes = [
   {
@@ -9,13 +10,20 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/LoginView.vue')
+    component: () => import('../views/LoginView.vue'),
+    meta: { requiresGuest: true }
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/RegisterView.vue'),
+    meta: { requiresGuest: true }
   },
   {
     path: '/profile',
     name: 'Profile',
     component: () => import('../views/ProfileView.vue'),
-    meta: { requiresAuth: true } // защищенный маршрут
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -24,11 +32,14 @@ const router = createRouter({
   routes
 })
 
-// Защита маршрутов (AC4)
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('token') // проверка токена
+  const authStore = useAuthStore()
+  const isAuthenticated = authStore.isAuthenticated
+
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login') // редирект на логин
+    next('/login')
+  } else if (to.meta.requiresGuest && isAuthenticated) {
+    next('/')
   } else {
     next()
   }
