@@ -1,5 +1,7 @@
+import axios from 'axios'
 import { defineStore } from 'pinia'
-import { authApi } from '@/api/auth'
+
+const API_URL = 'https://localhost:5005/api/v1'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -12,7 +14,7 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: (state) => !!state.token,
     userName: (state) => {
       if (!state.user) return ''
-      return `${state.user.first_name || ''} ${state.user.last_name || ''}`.trim()
+      return `${state.user.firstName || ''} ${state.user.lastName || ''}`.trim()
     }
   },
 
@@ -20,13 +22,24 @@ export const useAuthStore = defineStore('auth', {
     async login(email, password, rememberMe = false) {
       this.loading = true
       try {
-        const data = await authApi.login(email, password)
+        const response = await axios.post(`${API_URL}/Auth/login`, {
+          email,
+          password
+        })
+
+        const data = response.data
         this.token = data.token
         this.user = data.user
 
         if (rememberMe) {
           localStorage.setItem('token', data.token)
+        } else {
+          sessionStorage.setItem('token', data.token)
         }
+
+        // Устанавливаем заголовок для axios
+        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
+
         return true
       } catch (error) {
         console.error('Login error:', error)
@@ -39,10 +52,21 @@ export const useAuthStore = defineStore('auth', {
     async register(email, password, firstName, lastName) {
       this.loading = true
       try {
-        const data = await authApi.register(email, password, firstName, lastName)
+        const response = await axios.post(`${API_URL}/Auth/register`, {
+          email,
+          password,
+          firstName,
+          lastName
+        })
+
+        const data = response.data
         this.token = data.token
         this.user = data.user
         localStorage.setItem('token', data.token)
+
+        // Устанавливаем заголовок для axios
+        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
+
         return true
       } catch (error) {
         console.error('Register error:', error)
@@ -56,6 +80,18 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.user = null
       localStorage.removeItem('token')
+      sessionStorage.removeItem('token')
+      delete axios.defaults.headers.common['Authorization']
+    },
+
+    checkAuth() {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+      if (token) {
+        this.token = token
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        return true
+      }
+      return false
     }
   }
 })
