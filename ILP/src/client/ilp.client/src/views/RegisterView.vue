@@ -149,7 +149,7 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/js/stores/auth'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 

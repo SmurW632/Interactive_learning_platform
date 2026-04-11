@@ -1,11 +1,9 @@
-import axios from 'axios'
+import axios from '@/js/utils/axios'
 import { defineStore } from 'pinia'
-
-const API_URL = 'https://localhost:5005/api/v1'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || null,
+    token: localStorage.getItem('token') || sessionStorage.getItem('token') || null,
     user: null,
     loading: false
   }),
@@ -18,11 +16,12 @@ export const useAuthStore = defineStore('auth', {
     }
   },
 
+
   actions: {
     async login(email, password, rememberMe = false) {
       this.loading = true
       try {
-        const response = await axios.post(`${API_URL}/Auth/login`, {
+        const response = await axios.post(`/Auth/login`, {
           email,
           password
         })
@@ -52,7 +51,7 @@ export const useAuthStore = defineStore('auth', {
     async register(email, password, firstName, lastName) {
       this.loading = true
       try {
-        const response = await axios.post(`${API_URL}/Auth/register`, {
+        const response = await axios.post(`/Auth/register`, {
           email,
           password,
           firstName,

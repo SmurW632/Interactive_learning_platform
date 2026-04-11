@@ -74,9 +74,10 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/js/stores/auth'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from '@/js/utils/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
