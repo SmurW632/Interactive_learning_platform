@@ -4,7 +4,7 @@ using server.Services.PythonResearch;
 namespace server.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiV1Route("[controller]")]
 public class ResearchController : ControllerBase
 {
     private readonly IPythonResearchService _pythonResearch;

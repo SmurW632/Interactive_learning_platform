@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/user'
+import { useAuthStore } from '@/js/stores/user'
 import axios from 'axios'
 
 const axiosInstance = axios.create({

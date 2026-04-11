@@ -1,34 +1,34 @@
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/js/stores/auth'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('../views/HomeView.vue')
+    component: () => import('@/views/HomeView.vue')
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/LoginView.vue'),
+    component: () => import('@/views/LoginView.vue'),
     meta: { requiresGuest: true }
   },
   {
     path: '/register',
     name: 'Register',
-    component: () => import('../views/RegisterView.vue'),
+    component: () => import('@/views/RegisterView.vue'),
     meta: { requiresGuest: true }
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: () => import('../views/ProfileView.vue'),
+    component: () => import('@/views/ProfileView.vue'),
     meta: { requiresAuth: true } // защищенный маршрут
   },
   {
     path: '/research',
     name: 'research',
-    component: () => import('../components/ResearchView.vue'),
+    component: () => import('@/components/ResearchView.vue'),
   }
 ]
 
