@@ -311,3 +311,481 @@ a:hover {
         font-size: 28px;
     }
 }
+/* ===== ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ КАТАЛОГА ===== */
+
+/* Широкий контейнер для каталога */
+.container-wide {
+    max-width: 1200px;
+    padding: 0 32px;
+}
+
+/* Сетка каталога — 2 колонки */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+/* Карточка курса */
+.course-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+}
+
+.course-card-image {
+    height: 200px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 56px;
+}
+
+.course-card-content {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.course-card-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.course-card-author {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.course-meta-icons {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.course-meta-icons span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.course-card-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.stars {
+    color: #FBBF24;
+    letter-spacing: 3px;
+    font-size: 18px;
+}
+
+.rating-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.reviews-count {
+    font-size: 14px;
+    color: var(--text-tertiary);
+}
+
+.course-description-preview {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-clamp: 2;
+}
+
+.course-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.course-level {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: var(--primary-light);
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary);
+}
+
+.course-price {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.course-price.free {
+    color: var(--success);
+}
+
+/* Уровни сложности */
+.level-beginner {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.level-intermediate {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.level-advanced {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+/* Поиск и фильтры */
+.search-section {
+    margin-bottom: 32px;
+}
+
+.search-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.search-input-wrapper .input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    height: 48px;
+    padding: 12px 16px 12px 48px;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.search-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-btn {
+    width: 100px;
+    height: 48px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.search-btn:hover {
+    background: var(--primary-hover);
+}
+
+/* Фильтры */
+.filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.filter-select {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-md);
+    background: white;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    min-width: 160px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Теги фильтров */
+.filter-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: var(--primary-light);
+    border-radius: 9999px;
+    font-size: 13px;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+.filter-tag:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.filter-tag .remove {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.reset-btn {
+    background: var(--error) !important;
+    color: white !important;
+}
+
+.reset-btn:hover {
+    background: #dc2626 !important;
+    color: white !important;
+}
+
+/* Пагинация */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 50px;
+}
+
+.pagination-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--border-radius-md);
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination-item:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.pagination-item.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.pagination-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Скелетоны (загрузка) */
+.skeleton .course-card-image {
+    background: linear-gradient(135deg, #e0e0e0 0%, #f0f0f0 100%);
+}
+
+.skeleton-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-title {
+    height: 24px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    width: 80%;
+}
+
+.skeleton-text {
+    height: 16px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.skeleton-text.short {
+    width: 60%;
+}
+
+/* Хедер (шапка сайта) */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-logo .logo-emoji {
+    font-size: 28px;
+}
+
+.header-logo .logo-text {
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-nav {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.header-nav a {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.header-nav a:hover,
+.header-nav .active {
+    color: var(--primary);
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.user-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Адаптивность для каталога */
+@media (max-width: 1024px) {
+    .catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-wide {
+        padding: 0 20px;
+    }
+
+    .catalog-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .course-card-image {
+        height: 180px;
+    }
+
+    .course-card-title {
+        font-size: 20px;
+    }
+
+    .course-price {
+        font-size: 22px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .header-nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .search-btn {
+        width: 100%;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .filter-select {
+        width: 100%;
+    }
+}
