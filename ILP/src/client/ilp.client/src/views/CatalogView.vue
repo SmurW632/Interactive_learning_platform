@@ -215,8 +215,8 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { useCoursesStore } from '@/stores/courses'
+import { useAuthStore } from '@/js/stores/auth'
+import { useCoursesStore } from '@/js/stores/courses'
 import { categories, levels } from '@/mock/courses'
 
 const router = useRouter()

@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/catalog',
     name: 'Catalog',
-    component: () => import('../views/CatalogView.vue')
+    component: () => import('@/views/CatalogView.vue')
   },
   {
     path: '/login',
