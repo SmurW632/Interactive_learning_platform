@@ -1,4 +1,3 @@
-const API_BASE = '/api/v1/auth'
 
 // Вспомогательная функция для обработки ответов (единообразие)
 async function handleResponse(response) {

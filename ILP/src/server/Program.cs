@@ -6,8 +6,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using server.Data;
 using server.Data.DbContexts;
+using server.Services;
+using server.Services.PythonResearch;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseUrls("https://localhost:5005", "http://localhost:5004");
 
 // Add services
 builder.Services.AddControllers();
@@ -41,6 +45,8 @@ builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Services
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddHttpClient<IPythonResearchService, PythonResearchService>();
 // builder.Services.AddScoped<IAuthService, AuthService>();
 // builder.Services.AddScoped<ICourseService, CourseService>();
 // builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();

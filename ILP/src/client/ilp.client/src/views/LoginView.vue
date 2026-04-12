@@ -66,7 +66,7 @@
       </form>
 
       <!-- Ссылка на регистрацию -->
-      <p style="text-align: center; margin-top: 24px; color: var(--text-secondary)">
+      <p style="text-align: center; margin-top: 24px; color: #666">
         Нет аккаунта? <router-link to="/register">Зарегистрироваться</router-link>
       </p>
     </div>
@@ -74,9 +74,10 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/js/stores/auth'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import axios from '@/js/utils/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -101,9 +102,9 @@ const handleLogin = async () => {
 
   try {
     await authStore.login(email.value, password.value, rememberMe.value)
-    router.push('/')
+    router.push('/profile')
   } catch (error) {
-    errorMessage.value = error.message || 'Ошибка входа. Проверьте почту и пароль.'
+    errorMessage.value = error.response?.data?.message || 'Ошибка входа. Проверьте почту и пароль.'
   } finally {
     loading.value = false
   }
