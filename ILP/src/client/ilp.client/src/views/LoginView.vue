@@ -77,7 +77,6 @@
 import { useAuthStore } from '@/js/stores/auth'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from '@/js/utils/axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -104,7 +103,7 @@ const handleLogin = async () => {
     await authStore.login(email.value, password.value, rememberMe.value)
     router.push('/profile')
   } catch (error) {
-    errorMessage.value = error.response?.data?.message || 'Ошибка входа. Проверьте почту и пароль.'
+    errorMessage.value = error.response?.data?.message //|| 'Ошибка входа. Проверьте почту и пароль.'
   } finally {
     loading.value = false
   }
