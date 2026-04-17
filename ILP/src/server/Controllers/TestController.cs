@@ -1,12 +1,12 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.Models;
 
 namespace server.Controllers;
 
-[ApiController]
-[Route("api/v1/[controller]")]
-public class TestController : ControllerBase
+[Authorize]
+public class TestController : BaseApiV1Controller
 {
     [HttpGet("connection")]
     public IActionResult Connection()
