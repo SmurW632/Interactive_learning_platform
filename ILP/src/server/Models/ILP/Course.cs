@@ -34,6 +34,8 @@ namespace server.Models.ILP
         public string Language { get; set; } = "ru";
         public bool IsPublished { get; set; } = false;
         public DateTime? PublishedAt { get; set; }
+        public decimal Price { get; set; } = 0;
+        public bool IsFree => Price == 0;
 
         public Guid CreatedBy { get; set; }
         public int? CategoryId { get; set; }
@@ -41,6 +43,7 @@ namespace server.Models.ILP
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public User Creator { get; set; } = null!;
+        public Category? Category { get; set; }
         public ICollection<Module> Modules { get; set; } = [];
         public ICollection<Enrollment> Enrollments { get; set; } = [];
         public ICollection<Review> Reviews { get; set; } = [];

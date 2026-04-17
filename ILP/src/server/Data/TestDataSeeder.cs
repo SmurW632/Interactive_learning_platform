@@ -67,18 +67,30 @@ public static class TestDataSeeder
         context.Set<User>().AddRange(users);
         context.SaveChanges();
 
+        // 1.5. Создаем категории
+        var categories = new List<Category>
+        {
+            new Category { Id = 1, Name = "Программирование", Slug = "programming", SortOrder = 1, IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+            new Category { Id = 2, Name = "Веб-разработка", Slug = "web-development", SortOrder = 2, IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+            new Category { Id = 3, Name = "Data Science", Slug = "data-science", SortOrder = 3, IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+            new Category { Id = 4, Name = "Дизайн", Slug = "design", SortOrder = 4, IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+            new Category { Id = 5, Name = "Бизнес", Slug = "business", SortOrder = 5, IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
+        };
+
+        context.Set<Category>().AddRange(categories);
+        context.SaveChanges();
+
         // 2. Создаем курсы
         var aspNetCourseId = Guid.NewGuid();
         var vueCourseId = Guid.NewGuid();
 
         var courses = new List<Course>
         {
-            new Course
-            {
+            new() {
                 Id = aspNetCourseId,
                 Title = "ASP.NET Core 10 с нуля",
                 Slug = "aspnet-core-10-from-zero",
-                Description = "Полный курс по ASP.NET Core 10. Изучите создание современных веб-приложений с нуля до профи.",
+                Description = "Полный курс по ASP.NET Core 10...",
                 ShortDescription = "Изучите ASP.NET Core 10 и создавайте мощные веб-приложения",
                 PreviewImageUrl = "https://picsum.photos/id/0/300/200",
                 Level = CourseLevel.Beginner,
@@ -87,15 +99,16 @@ public static class TestDataSeeder
                 IsPublished = true,
                 PublishedAt = DateTime.UtcNow.AddDays(-15),
                 CreatedBy = teacherId,
+                Price = 5900, // Добавлена цена
+                CategoryId = 1, // Программирование
                 CreatedAt = DateTime.UtcNow.AddDays(-20),
                 UpdatedAt = DateTime.UtcNow.AddDays(-20)
             },
-            new Course
-            {
+            new() {
                 Id = vueCourseId,
                 Title = "Vue.js 3: Мастерство разработки",
                 Slug = "vue3-mastery",
-                Description = "Полное руководство по Vue.js 3. Композиция API, Pinia, роутинг и создание реальных проектов.",
+                Description = "Полное руководство по Vue.js 3...",
                 ShortDescription = "Освойте Vue.js 3 и создавайте реактивные интерфейсы",
                 PreviewImageUrl = "https://picsum.photos/id/1/300/200",
                 Level = CourseLevel.Intermediate,
@@ -104,6 +117,8 @@ public static class TestDataSeeder
                 IsPublished = true,
                 PublishedAt = DateTime.UtcNow.AddDays(-10),
                 CreatedBy = teacherId,
+                Price = 0, // Бесплатный
+                CategoryId = 2, // Веб-разработка
                 CreatedAt = DateTime.UtcNow.AddDays(-15),
                 UpdatedAt = DateTime.UtcNow.AddDays(-15)
             }
