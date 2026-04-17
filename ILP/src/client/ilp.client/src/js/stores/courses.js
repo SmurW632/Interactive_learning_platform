@@ -17,17 +17,14 @@ export const useCoursesStore = defineStore('courses', {
     },
     sortBy: 'popular',
     currentPage: 1,
-    itemsPerPage: 12,
+    itemsPerPage: 4,
     totalCount: 0,
     totalPages: 0
   }),
 
   getters: {
-    filteredAndSortedCourses: (state) => {
-      // Фильтрация и сортировка теперь на сервере
-      // Этот геттер просто возвращает courses из store
-      return state.courses
-    },
+    // Этот геттер больше не нужен для фильтрации, но оставим для совместимости
+    filteredAndSortedCourses: (state) => state.courses,
 
     hasActiveFilters: (state) => {
       return state.filters.search ||
@@ -63,6 +60,8 @@ export const useCoursesStore = defineStore('courses', {
 
       try {
         const params = this.queryParams
+        console.log('Fetching courses with params:', params) // Для отладки
+
         const response = await axios.get('/Courses', { params })
 
         const data = response.data
@@ -71,6 +70,13 @@ export const useCoursesStore = defineStore('courses', {
         this.currentPage = data.page
         this.totalPages = data.totalPages
         this.itemsPerPage = data.pageSize
+
+        console.log('Courses loaded:', {
+          count: this.courses.length,
+          totalCount: this.totalCount,
+          currentPage: this.currentPage,
+          totalPages: this.totalPages
+        })
 
         return data
       } catch (error) {

@@ -30,7 +30,7 @@ public class CoursesController : BaseApiV1Controller
         [FromQuery] string? duration,
         [FromQuery] string? sortBy,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 12)
+        [FromQuery] int pageSize = 4)
     {
         try
         {

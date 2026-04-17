@@ -1,6 +1,6 @@
 <template>
   <div class="container container-wide">
-    <!-- Шапка (оставляем без изменений) -->
+    <!-- Шапка -->
     <header class="header">
       <div class="header-logo">
         <span class="logo-emoji">📚</span>
@@ -39,7 +39,7 @@
       <div class="filters">
         <select class="filter-select" v-model="localFilters.category" @change="applyFilters">
           <option value="">Все категории</option>
-          <option v-for="cat in coursesStore.categories" :key="cat.id" :value="cat.name">
+          <option v-for="cat in categories" :key="cat.id" :value="cat.name">
             {{ cat.name }}
           </option>
         </select>
@@ -94,7 +94,7 @@
 
     <!-- Результаты -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-      <h2 style="font-size: 28px;">Найдено {{ coursesStore.totalCount }} курсов</h2>
+      <h2 style="font-size: 28px;">Найдено {{ formatNumber(totalCount) }} курсов</h2>
       <div style="display: flex; gap: 16px; align-items: center;">
         <span style="color: var(--text-secondary);">Сортировка:</span>
         <select
@@ -112,8 +112,8 @@
     </div>
 
     <!-- Скелетон загрузки -->
-    <div v-if="coursesStore.loading" class="catalog-grid">
-      <div v-for="i in 6" :key="i" class="course-card skeleton">
+    <div v-if="loading" class="catalog-grid">
+      <div v-for="i in itemsPerPage" :key="i" class="course-card skeleton">
         <div class="course-card-image skeleton-shimmer"></div>
         <div class="course-card-content">
           <div class="skeleton-title"></div>
@@ -124,9 +124,9 @@
     </div>
 
     <!-- Сетка курсов -->
-    <div v-else class="catalog-grid">
+    <div v-else-if="courses.length > 0" class="catalog-grid">
       <div
-        v-for="course in coursesStore.courses"
+        v-for="course in courses"
         :key="course.id"
         class="course-card"
         @click="goToCourse(course.id)"
@@ -165,27 +165,41 @@
       </div>
     </div>
 
+    <!-- Сообщение, если курсов нет -->
+    <div v-else class="empty-state">
+      <div class="empty-state-icon">🔍</div>
+      <h3>Ничего не найдено</h3>
+      <p>Попробуйте изменить параметры поиска или фильтры</p>
+      <button class="btn btn-primary" @click="resetAllFilters">Сбросить фильтры</button>
+    </div>
+
     <!-- Пагинация -->
-    <div class="pagination" v-if="coursesStore.totalPages > 1">
-      <span
-        class="pagination-item"
-        :class="{ disabled: coursesStore.currentPage === 1 }"
-        @click="changePage(coursesStore.currentPage - 1)"
-      >←</span>
+    <div v-if="totalPages > 1" class="pagination">
+      <button
+        class="pagination-btn"
+        :disabled="currentPage === 1"
+        @click="changePage(currentPage - 1)"
+      >
+        ←
+      </button>
 
-      <span
-        v-for="page in visiblePages"
+      <button
+        v-for="page in totalPages"
         :key="page"
-        class="pagination-item"
-        :class="{ active: page === coursesStore.currentPage }"
+        class="pagination-btn"
+        :class="{ active: page === currentPage }"
         @click="changePage(page)"
-      >{{ page }}</span>
+      >
+        {{ page }}
+      </button>
 
-      <span
-        class="pagination-item"
-        :class="{ disabled: coursesStore.currentPage === coursesStore.totalPages }"
-        @click="changePage(coursesStore.currentPage + 1)"
-      >→</span>
+      <button
+        class="pagination-btn"
+        :disabled="currentPage === totalPages"
+        @click="changePage(currentPage + 1)"
+      >
+        →
+      </button>
     </div>
   </div>
 </template>
@@ -200,6 +214,15 @@ const router = useRouter()
 const authStore = useAuthStore()
 const coursesStore = useCoursesStore()
 
+// Данные из store
+const courses = computed(() => coursesStore.courses)
+const categories = computed(() => coursesStore.categories)
+const loading = computed(() => coursesStore.loading)
+const totalCount = computed(() => coursesStore.totalCount)
+const totalPages = computed(() => coursesStore.totalPages)
+const currentPage = computed(() => coursesStore.currentPage)
+const itemsPerPage = computed(() => coursesStore.itemsPerPage)
+
 // Локальные копии фильтров для двустороннего связывания
 const localFilters = ref({
   search: '',
@@ -211,7 +234,7 @@ const localFilters = ref({
 
 const localSortBy = ref('popular')
 
-// Уровни сложности (можно вынести в отдельный файл или получать с сервера)
+// Уровни сложности
 const levels = [
   { value: 'Beginner', label: 'Начальный' },
   { value: 'Intermediate', label: 'Средний' },
@@ -231,26 +254,6 @@ const hasActiveFilters = computed(() => {
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const userName = computed(() => authStore.userName)
 
-// Пагинация: какие страницы показывать
-const visiblePages = computed(() => {
-  const pages = []
-  const maxVisible = 5
-  const current = coursesStore.currentPage
-  const total = coursesStore.totalPages
-
-  let start = Math.max(1, current - Math.floor(maxVisible / 2))
-  let end = Math.min(total, start + maxVisible - 1)
-
-  if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1)
-  }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-  return pages
-})
-
 // Методы
 const applyFilters = () => {
   coursesStore.setFilter('search', localFilters.value.search)
@@ -261,7 +264,6 @@ const applyFilters = () => {
 }
 
 const onSearchChange = () => {
-  // Debounce для поиска
   clearTimeout(window.searchTimeout)
   window.searchTimeout = setTimeout(() => {
     applyFilters()
@@ -300,7 +302,9 @@ const resetAllFilters = () => {
 }
 
 const changePage = (page) => {
+  if (page < 1 || page > totalPages.value) return
   coursesStore.setPage(page)
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const goToCourse = (courseId) => {
@@ -314,6 +318,7 @@ const logout = () => {
 
 // Вспомогательные функции для отображения
 const formatNumber = (num) => {
+  if (!num) return '0'
   if (num >= 1000) {
     return (num / 1000).toFixed(1) + 'k'
   }
@@ -321,10 +326,12 @@ const formatNumber = (num) => {
 }
 
 const formatPrice = (price) => {
+  if (!price && price !== 0) return '0 ₽'
   return new Intl.NumberFormat('ru-RU').format(price) + ' ₽'
 }
 
 const getStars = (rating) => {
+  if (!rating) return '☆☆☆☆☆'
   const full = Math.floor(rating)
   const half = rating % 1 >= 0.5
   const empty = 5 - full - (half ? 1 : 0)
@@ -369,6 +376,7 @@ const getDurationLabel = (duration) => {
 }
 
 const getCourseEmoji = (title) => {
+  if (!title) return '📚'
   const emojiMap = {
     'JavaScript': '📘',
     'Python': '🐍',
@@ -377,7 +385,15 @@ const getCourseEmoji = (title) => {
     'React': '⚛️',
     'SQL': '🗄️',
     'Machine': '🤖',
-    'Английский': '📱'
+    'Английский': '📱',
+    'ASP.NET': '🚀',
+    'Vue.js': '💚',
+    'Docker': '🐳',
+    'Kubernetes': '☸️',
+    'Git': '📦',
+    'Data Science': '📈',
+    'Маркетинг': '📢',
+    'Бизнес': '💼'
   }
   for (const [key, emoji] of Object.entries(emojiMap)) {
     if (title.includes(key)) return emoji
@@ -388,14 +404,14 @@ const getCourseEmoji = (title) => {
 // Загрузка данных при монтировании
 onMounted(async () => {
   await Promise.all([
-    coursesStore.fetchCourses(),
-    coursesStore.fetchCategories()
+    coursesStore.fetchCategories(),
+    coursesStore.fetchCourses()
   ])
 })
 </script>
 
 <style scoped>
-/* Стили остаются без изменений */
+/* Скелетоны */
 .skeleton .course-card-image {
   background: linear-gradient(135deg, #e0e0e0 0%, #f0f0f0 100%);
 }
@@ -430,6 +446,7 @@ onMounted(async () => {
   width: 60%;
 }
 
+/* Уровни сложности */
 .level-beginner {
   background: #D1FAE5;
   color: #065F46;
@@ -583,33 +600,82 @@ onMounted(async () => {
   color: #10b981;
 }
 
+/* Пагинация */
 .pagination {
   display: flex;
   justify-content: center;
   gap: 8px;
   margin-top: 40px;
+  margin-bottom: 40px;
 }
 
-.pagination-item {
-  padding: 8px 16px;
+.pagination-btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
+  background: white;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
 }
 
-.pagination-item:hover:not(.disabled):not(.active) {
+.pagination-btn:hover:not(:disabled) {
   background: #f3f4f6;
+  border-color: #d1d5db;
 }
 
-.pagination-item.active {
+.pagination-btn.active {
   background: #667eea;
   color: white;
   border-color: #667eea;
 }
 
-.pagination-item.disabled {
+.pagination-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  background: #f9fafb;
+}
+
+/* Пустое состояние */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  margin: 40px 0;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .catalog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pagination-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
 }
 </style>
