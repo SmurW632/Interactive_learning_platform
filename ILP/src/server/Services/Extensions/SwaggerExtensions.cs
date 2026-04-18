@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
-
 namespace server.Extensions;
 
 public static class SwaggerExtensions
@@ -17,8 +16,8 @@ public static class SwaggerExtensions
                 Description = "API для интерактивной онлайн-платформы для обучения",
                 Contact = new OpenApiContact
                 {
-                    Name = "Support Team",
-                    Email = "support@eduplatform.com"
+                    Name = "MMAT",
+                    Email = "mmat@eduplatform.com"
                 }
             });
 
@@ -30,23 +29,13 @@ public static class SwaggerExtensions
                 Name = "Authorization",
                 Type = SecuritySchemeType.Http,
                 BearerFormat = "JWT",
-                Scheme = "bearer"
+                Scheme = "Bearer"
             });
 
-            // c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            // {
-            //     {
-            //         new OpenApiSecurityScheme
-            //         {
-            //             Reference = new OpenApiReference
-            //             {
-            //                 Type = ReferenceType.SecurityScheme,
-            //                 Id = "Bearer"
-            //             }
-            //         },
-            //         Array.Empty<string>()
-            //     }
-            // });
+            c.AddSecurityRequirement((document) => new OpenApiSecurityRequirement()
+            {
+                [new OpenApiSecuritySchemeReference("oauth2", document)] = ["readAccess", "writeAccess"]
+            });
         });
 
         return services;

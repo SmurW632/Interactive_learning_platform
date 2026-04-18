@@ -81,6 +81,30 @@ public class CoursesController : BaseApiV1Controller
     }
 
     /// <summary>
+    /// Получить полную информацию о курсе для страницы курса
+    /// </summary>
+    [HttpGet("{id}/full")]
+    public async Task<IActionResult> GetCourseFullDetail(Guid id)
+    {
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdGuid = userId != null ? Guid.Parse(userId) : (Guid?)null;
+
+            var course = await _courseService.GetCourseFullDetailAsync(id, userIdGuid);
+            if (course == null)
+                return NotFound(new { message = "Курс не найден" });
+
+            return Ok(course);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting course full detail {CourseId}", id);
+            return StatusCode(500, new { message = "Ошибка при получении курса" });
+        }
+    }
+
+    /// <summary>
     /// Получить все категории
     /// </summary>
     [HttpGet("categories")]
@@ -96,5 +120,107 @@ public class CoursesController : BaseApiV1Controller
             _logger.LogError(ex, "Error getting categories");
             return StatusCode(500, new { message = "Ошибка при получении категорий" });
         }
+    }
+
+    /// <summary>
+    /// Начать курс (записаться)
+    /// </summary>
+    [Authorize]
+    [HttpPost("{id}/start")]
+    public async Task<IActionResult> StartCourse(Guid id)
+    {
+        try
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _courseService.StartCourseAsync(userId, id);
+
+            if (!result.IsSuccess)
+                return BadRequest(new { message = result.Message ?? "Не удалось записаться на курс" });
+
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error starting course {CourseId}", id);
+            return StatusCode(500, new { message = "Ошибка при записи на курс" });
+        }
+    }
+
+    /// <summary>
+    /// Получить содержимое урока
+    /// </summary>
+    [HttpGet("{courseId}/lessons/{lessonId}")]
+    public async Task<IActionResult> GetLessonContent(Guid courseId, Guid lessonId)
+    {
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdGuid = userId != null ? Guid.Parse(userId) : (Guid?)null;
+
+            var lesson = await _courseService.GetLessonContentAsync(courseId, lessonId, userIdGuid);
+            if (lesson == null)
+                return NotFound(new { message = "Урок не найден" });
+
+            return Ok(lesson);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting lesson content {LessonId}", lessonId);
+            return StatusCode(500, new { message = "Ошибка при получении урока" });
+        }
+    }
+
+    /// <summary>
+    /// Обновить прогресс урока
+    /// </summary>
+    [Authorize]
+    [HttpPost("lessons/{lessonId}/progress")]
+    public async Task<IActionResult> UpdateLessonProgress(Guid lessonId, [FromBody] UpdateProgressRequest request)
+    {
+        try
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _courseService.UpdateLessonProgressAsync(userId, lessonId, request);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating lesson progress {LessonId}", lessonId);
+            return StatusCode(500, new { message = "Ошибка при обновлении прогресса" });
+        }
+    }
+
+    //[Authorize]
+    [HttpGet("test")]
+    public IActionResult TestAuth()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userName = User.FindFirstValue(ClaimTypes.Name);
+        var email = User.FindFirstValue(ClaimTypes.Email);
+
+        return Ok(new
+        {
+            message = "Вы авторизованы!",
+            userId,
+            userName,
+            email,
+            claims = User.Claims.Select(c => new { c.Type, c.Value })
+        });
     }
 }

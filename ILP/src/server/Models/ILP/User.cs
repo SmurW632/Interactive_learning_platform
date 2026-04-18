@@ -36,5 +36,6 @@ namespace server.Models.ILP
 
         public ICollection<Enrollment> Enrollments { get; set; } = [];
         public ICollection<Review> Reviews { get; set; } = [];
+        public ICollection<Course> CreatedCourses { get; set; } = [];
     }
 }

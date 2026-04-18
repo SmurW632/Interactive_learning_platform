@@ -1,10 +1,11 @@
 using server.Data;
 using server.Extensions;
+using static server.Constants.AppConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Настройка хоста
-builder.WebHost.UseUrls("https://localhost:5005", "http://localhost:5004");
+builder.WebHost.UseUrls(Ports.Http);
 
 // 2. Добавление базовых сервисов
 builder.Services.AddControllersAndApiExplorer();

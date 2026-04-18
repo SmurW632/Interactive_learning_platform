@@ -14,7 +14,7 @@ public static class ServiceExtensions
         // Business Services
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICourseService, CourseService>();
-        // services.AddScoped<IEnrollmentService, EnrollmentService>();
+        services.AddScoped<IEnrollmentService, EnrollmentService>();
         // services.AddScoped<IProgressService, ProgressService>();
 
         // HTTP Clients
