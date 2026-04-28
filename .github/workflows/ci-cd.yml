@@ -6,12 +6,16 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 env:
   DOTNET_VERSION: '10.0.x'
   NODE_VERSION: '20.x'
 
 jobs:
-  # ==================== CI: КЛИЕНТ (Vue) ====================
   client-tests:
     name: Client - Tests
     runs-on: ubuntu-latest
@@ -45,7 +49,6 @@ jobs:
           cd ILP/src/client/ilp.client
           npm run build
 
-  # ==================== CI: СЕРВЕР (.NET) ====================
   server-tests:
     name: Server - Tests
     runs-on: ubuntu-latest
@@ -74,7 +77,6 @@ jobs:
           cd ILP/tests/server
           dotnet test --configuration Release --verbosity normal
 
-  # ==================== CD: ДЕПЛОЙ ====================
   deploy:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
@@ -107,8 +109,45 @@ jobs:
           publish_dir: ./ILP/src/client/ilp.client/dist
           publish_branch: gh-pages
           full_commit_message: 'Deploy: ${{ github.event.head_commit.message }}'
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
 
       - name: Deployment info
         run: |
           echo "✅ Deployment completed!"
           echo "🌐 URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+
+  deploy-frontend:
+    name: Deploy Frontend to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [client-tests]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: |
+          cd ILP/src/client/ilp.client
+          npm install --legacy-peer-deps
+
+      - name: Build with correct publicPath
+        run: |
+          cd ILP/src/client/ilp.client
+          npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ILP/src/client/ilp.client/dist
+          publish_branch: gh-pages
+          force_orphan: true
+          full_commit_message: 'Deploy frontend: ${{ github.event.head_commit.message }}'
