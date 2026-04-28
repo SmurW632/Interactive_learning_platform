@@ -4,7 +4,6 @@ using server.Services.PythonResearch;
 
 namespace server.Controllers;
 
-[Authorize]
 public class ResearchController : BaseApiV1Controller
 {
     private readonly IPythonResearchService _pythonResearch;
