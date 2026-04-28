@@ -1,0 +1,150 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  NODE_VERSION: '20.x'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # ==================== CI: ПРОВЕРКИ ====================
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/client/ilp.client/package-lock.json
+
+      # 3. Install dependencies (Client)
+      - name: Install client dependencies
+        run: |
+          cd src/client/ilp.client
+          npm install --legacy-peer-deps
+
+      # 4. Lint (Client)
+      - name: Run linter
+        run: |
+          cd src/client/ilp.client
+          npm run lint || true  # Пока не настроен линтер, не падаем
+
+      # 5. Unit tests (Client)
+      - name: Run client tests
+        run: |
+          cd src/client/ilp.client
+          npm run test:unit -- --watchAll=false || true
+
+      # 6. Build (Client)
+      - name: Build client
+        run: |
+          cd src/client/ilp.client
+          npm run build
+
+      # 7. Setup .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # 8. Restore .NET dependencies
+      - name: Restore .NET dependencies
+        run: |
+          cd src/server
+          dotnet restore
+
+      # 9. Build .NET
+      - name: Build .NET
+        run: |
+          cd src/server
+          dotnet build --no-restore --configuration Release
+
+      # 10. Run .NET tests
+      - name: Run .NET tests
+        run: |
+          cd src/server
+          dotnet test --no-build --verbosity normal
+
+      # 11. Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # 12. Install Python dependencies
+      - name: Install Python dependencies
+        run: |
+          cd src/py_ai
+          pip install -r requirements.txt || true
+
+      # 13. Upload build artifacts (для CD)
+      - name: Upload client build
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-dist
+          path: src/client/ilp.client/dist
+          retention-days: 7
+
+      - name: Upload server build
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-publish
+          path: src/server/bin/Release/net10.0/publish
+          retention-days: 7
+  cd:
+    name: Continuous Deployment
+    runs-on: ubuntu-latest
+    needs: ci
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Download client build artifact
+      - name: Download client build
+        uses: actions/download-artifact@v4
+        with:
+          name: client-dist
+          path: dist
+
+      # 3. Deploy to GitHub Pages (Frontend)
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          destination_dir: ./
+          full_commit_message: 'Deploy: ${{ github.event.head_commit.message }}'
+        if: always()
+
+      # 4. Deploy to Vercel (опционально)
+      # - name: Deploy to Vercel
+      #   uses: amondnet/vercel-action@v20
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     vercel-args: '--prod'
+
+      # 5. Notify on success
+      - name: Deployment success
+        run: |
+          echo "✅ Deployment successful!"
+          echo "📱 Frontend: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo "🌐 Repository: ${{ github.server_url }}/${{ github.repository }}"

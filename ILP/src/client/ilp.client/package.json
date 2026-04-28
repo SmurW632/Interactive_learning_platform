@@ -5,8 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit",
+    "test:unit:ci": "vue-cli-service test:unit --watchAll=false",
     "lint": "vue-cli-service lint",
-    "test": "jest"
+    "lint:fix": "vue-cli-service lint --fix"
   },
   "dependencies": {
     "axios": "^1.15.0",
