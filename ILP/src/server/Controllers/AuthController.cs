@@ -4,9 +4,7 @@ using server.Services;
 
 namespace server.Controllers;
 
-[ApiController]
-[ApiV1Route("[controller]")]
-public class AuthController : ControllerBase
+public class AuthController : BaseApiV1Controller
 {
     private readonly IAuthService _authService;
     private readonly ILogger<AuthController> _logger;

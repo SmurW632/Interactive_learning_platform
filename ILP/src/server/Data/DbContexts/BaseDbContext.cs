@@ -12,17 +12,16 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
     public DbSet<Enrollment> Enrollments { get; set; }
     public DbSet<LessonProgress> LessonProgresses { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // User configuration
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
             .IsUnique();
 
-        // Course configuration
         modelBuilder.Entity<Course>()
             .HasIndex(c => c.Slug)
             .IsUnique();
@@ -31,27 +30,43 @@ public abstract class BaseDbContext(DbContextOptions options) : DbContext(option
             .Property(c => c.Level)
             .HasConversion<string>();
 
-        // Enrollment unique constraint
+        modelBuilder.Entity<Course>()
+            .Property(c => c.Price)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.Slug)
+            .IsUnique();
+
+        modelBuilder.Entity<Category>()
+            .HasOne(c => c.Parent)
+            .WithMany(c => c.Children)
+            .HasForeignKey(c => c.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<Enrollment>()
             .HasIndex(e => new { e.UserId, e.CourseId })
             .IsUnique();
 
-        // LessonProgress unique constraint
         modelBuilder.Entity<LessonProgress>()
             .HasIndex(lp => new { lp.EnrollmentId, lp.LessonId })
             .IsUnique();
 
-        // Review unique constraint
         modelBuilder.Entity<Review>()
             .HasIndex(r => new { r.UserId, r.CourseId })
             .IsUnique();
 
-        // Configure relationships
         modelBuilder.Entity<Course>()
             .HasOne(c => c.Creator)
             .WithMany()
             .HasForeignKey(c => c.CreatedBy)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Course>()
+            .HasOne(c => c.Category)
+            .WithMany(cat => cat.Courses)
+            .HasForeignKey(c => c.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Module>()
             .HasOne(m => m.Course)

@@ -2,21 +2,37 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Backend",
+            "name": ".NET Core Launch (server)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "start-backend",
-            "program": "${workspaceFolder}/ILP/src/server/bin/Debug/net10.0/server.dll",
+            "preLaunchTask": "build",
+            "program": "dotnet",
+            "args": ["run", "--no-build"],
             "cwd": "${workspaceFolder}/ILP/src/server",
             "stopAtEntry": false,
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Vue.js Debug (client)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "https://localhost:5005",
+            "webRoot": "${workspaceFolder}/ILP/src/client/ilp.client/src",
+            "sourceMapPathOverrides": {
+                "webpack:///./src/*": "${webRoot}/*",
+                "webpack:///src/*": "${webRoot}/*",
+                "webpack:///*": "*",
+                "webpack:///./~/*": "${webRoot}/node_modules/*"
+            }
         }
     ],
     "compounds": [
         {
-            "name": "Full Stack",
-            "configurations": ["Debug Backend"],
-            "preLaunchTask": "start-frontend"
+            "name": "Full Stack Debug",
+            "configurations": [".NET Core Launch (server)", "Vue.js Debug (client)"]
         }
     ]
 }

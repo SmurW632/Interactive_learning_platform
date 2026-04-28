@@ -1,10 +1,13 @@
+import axios from '@/js/utils/axios'
 import { defineStore } from 'pinia'
-import { mockCourses } from '@/mock/courses'
 
 export const useCoursesStore = defineStore('courses', {
   state: () => ({
     courses: [],
+    categories: [],
     loading: false,
+    error: null,
+    // Фильтры
     filters: {
       search: '',
       category: '',
@@ -14,99 +17,111 @@ export const useCoursesStore = defineStore('courses', {
     },
     sortBy: 'popular',
     currentPage: 1,
-    itemsPerPage: 6
+    itemsPerPage: 4,
+    totalCount: 0,
+    totalPages: 0
   }),
 
   getters: {
-    filteredAndSortedCourses() {
-      let result = [...this.courses]
+    // Этот геттер больше не нужен для фильтрации, но оставим для совместимости
+    filteredAndSortedCourses: (state) => state.courses,
 
-      // Поиск по названию
-      if (this.filters.search) {
-        const searchLower = this.filters.search.toLowerCase()
-        result = result.filter(course =>
-          course.title.toLowerCase().includes(searchLower)
-        )
-      }
-
-      // Фильтр по категориям
-      if (this.filters.category) {
-        result = result.filter(course => course.category === this.filters.category)
-      }
-
-      // Фильтр по уровню
-      if (this.filters.level) {
-        result = result.filter(course => course.level === this.filters.level)
-      }
-
-      // Фильтр по цене
-      if (this.filters.priceRange === 'free') {
-        result = result.filter(course => course.isFree)
-      } else if (this.filters.priceRange === 'paid') {
-        result = result.filter(course => !course.isFree)
-      }
-
-      // Фильтр по длительности
-      if (this.filters.duration !== 'all') {
-        const [min, max] = this.filters.duration.split('-').map(Number)
-        result = result.filter(course => {
-          if (!course.durationHours) return false
-          if (max) {
-            return course.durationHours >= min && course.durationHours <= max
-          } else {
-            return course.durationHours >= min
-          }
-        })
-      }
-
-      // Сортировка
-      switch (this.sortBy) {
-        case 'price_asc':
-          result.sort((a, b) => (a.price || 0) - (b.price || 0))
-          break
-        case 'price_desc':
-          result.sort((a, b) => (b.price || 0) - (a.price || 0))
-          break
-        case 'rating':
-          result.sort((a, b) => b.averageRating - a.averageRating)
-          break
-        case 'popular':
-        default:
-          result.sort((a, b) => b.totalReviews - a.totalReviews)
-      }
-
-      return result
+    hasActiveFilters: (state) => {
+      return state.filters.search ||
+             state.filters.category ||
+             state.filters.level ||
+             state.filters.priceRange !== 'all' ||
+             state.filters.duration !== 'all'
     },
 
-    paginatedCourses() {
-      const start = (this.currentPage - 1) * this.itemsPerPage
-      const end = start + this.itemsPerPage
-      return this.filteredAndSortedCourses.slice(start, end)
-    },
+    // Получить параметры запроса для API
+    queryParams: (state) => {
+      const params = {}
 
-    totalPages() {
-      return Math.ceil(this.filteredAndSortedCourses.length / this.itemsPerPage)
+      if (state.filters.search) params.search = state.filters.search
+      if (state.filters.category) params.category = state.filters.category
+      if (state.filters.level) params.level = state.filters.level
+      if (state.filters.priceRange !== 'all') params.priceRange = state.filters.priceRange
+      if (state.filters.duration !== 'all') params.duration = state.filters.duration
+
+      params.sortBy = state.sortBy
+      params.page = state.currentPage
+      params.pageSize = state.itemsPerPage
+
+      return params
     }
   },
 
   actions: {
+    // Загрузка курсов с сервера
     async fetchCourses() {
       this.loading = true
+      this.error = null
+
       try {
-        await new Promise(resolve => setTimeout(resolve, 500))
-        this.courses = mockCourses
+        const params = this.queryParams
+        console.log('Fetching courses with params:', params) // Для отладки
+
+        const response = await axios.get('/Courses', { params })
+
+        const data = response.data
+        this.courses = data.items
+        this.totalCount = data.totalCount
+        this.currentPage = data.page
+        this.totalPages = data.totalPages
+        this.itemsPerPage = data.pageSize
+
+        console.log('Courses loaded:', {
+          count: this.courses.length,
+          totalCount: this.totalCount,
+          currentPage: this.currentPage,
+          totalPages: this.totalPages
+        })
+
+        return data
       } catch (error) {
-        console.error('Error fetching courses:', error)
+        this.error = error.response?.data?.message || 'Ошибка загрузки курсов'
+        console.error('Failed to fetch courses:', error)
+        throw error
       } finally {
         this.loading = false
       }
     },
 
-    setFilter(key, value) {
-      this.filters[key] = value
-      this.currentPage = 1
+    // Загрузка категорий
+    async fetchCategories() {
+      try {
+        const response = await axios.get('/Courses/categories')
+        this.categories = response.data
+        return response.data
+      } catch (error) {
+        console.error('Failed to fetch categories:', error)
+        this.categories = []
+      }
     },
 
+    // Установка фильтра
+    setFilter(key, value) {
+      this.filters[key] = value
+      this.currentPage = 1 // Сброс страницы при изменении фильтра
+      this.fetchCourses() // Перезагружаем курсы
+    },
+
+    // Установка сортировки
+    setSortBy(sortBy) {
+      this.sortBy = sortBy
+      this.currentPage = 1
+      this.fetchCourses()
+    },
+
+    // Установка страницы
+    setPage(page) {
+      if (page < 1 || page > this.totalPages) return
+      this.currentPage = page
+      this.fetchCourses()
+    },
+
+    // Сброс всех фильтров
     resetFilters() {
       this.filters = {
         search: '',
@@ -117,15 +132,29 @@ export const useCoursesStore = defineStore('courses', {
       }
       this.sortBy = 'popular'
       this.currentPage = 1
+      this.fetchCourses()
     },
 
-    setPage(page) {
-      this.currentPage = page
+    // Получить детальную информацию о курсе
+    async fetchCourseById(courseId) {
+      try {
+        const response = await axios.get(`/Courses/${courseId}`)
+        return response.data
+      } catch (error) {
+        console.error('Failed to fetch course:', error)
+        throw error
+      }
     },
 
-    setSortBy(sort) {
-      this.sortBy = sort
-      this.currentPage = 1
+    // Запись на курс
+    async enrollInCourse(courseId) {
+      try {
+        const response = await axios.post(`/Courses/${courseId}/enroll`)
+        return response.data
+      } catch (error) {
+        console.error('Failed to enroll in course:', error)
+        throw error
+      }
     }
   }
 })
