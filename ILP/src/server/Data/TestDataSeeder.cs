@@ -11,9 +11,20 @@ public static class TestDataSeeder
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        // Проверяем, есть ли уже данные
-        if (context.Set<User>().Any())
-            return;
+        try
+        {
+            if (context.Set<User>().Any())
+            {
+                Console.WriteLine("Data already exists, skipping seed");
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error checking existing data (table might not exist): {ex.Message}");
+            // Если таблицы нет, продолжаем сидирование - миграции должны были создать таблицы
+            // но если их нет, то Seed создаст данные при EnsureCreated
+        }
 
         Console.WriteLine("🌱 Seeding test data...");
 

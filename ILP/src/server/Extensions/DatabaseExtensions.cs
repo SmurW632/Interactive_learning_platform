@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.Data.DbContexts;
+using server.Models.ILP;
 
 namespace server.Extensions;
 
@@ -20,7 +21,7 @@ public static class DatabaseInitializer
             if (usePostgres && context is PostgresDbContext postgresContext)
             {
                 // Для PostgreSQL применяем миграции
-                await postgresContext.Database.MigrateAsync();
+                await postgresContext.Database.EnsureCreatedAsync();
                 Console.WriteLine("✅ PostgreSQL database migrated");
             }
             else
@@ -30,9 +31,16 @@ public static class DatabaseInitializer
                 Console.WriteLine("✅ Database created");
             }
 
-            // Заполняем тестовыми данными
-            TestDataSeeder.Seed(context);
-            Console.WriteLine("✅ Test data seeded");
+            // Заполняем тестовыми данными (только если нет данных)
+            if (!await context.Set<User>().AnyAsync())
+            {
+                TestDataSeeder.Seed(context);
+                Console.WriteLine("✅ Test data seeded");
+            }
+            else
+            {
+                Console.WriteLine("ℹ️ Database already contains data, skipping seed");
+            }
         }
         catch (Exception ex)
         {

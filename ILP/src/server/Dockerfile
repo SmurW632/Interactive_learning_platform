@@ -11,6 +11,9 @@ RUN dotnet publish ./ILP/src/server/server.csproj -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
+
+RUN apt-get update && apt-get install -y libgssapi-krb5-2
+
 EXPOSE 8080
 EXPOSE 8081
 
