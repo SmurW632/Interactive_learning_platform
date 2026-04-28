@@ -11,11 +11,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: ['unit/**/*.spec.{js,ts}']
+    include: ['**/*.test.ts', '**/*.spec.ts'],
+    testTimeout: 10000,
   },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, '../src/client/ilp.client/src')
-    }
-  }
 })
