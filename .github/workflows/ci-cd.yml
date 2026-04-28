@@ -6,12 +6,16 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 env:
   DOTNET_VERSION: '10.0.x'
   NODE_VERSION: '20.x'
 
 jobs:
-  # ==================== CI: КЛИЕНТ (Vue) ====================
   client-tests:
     name: Client - Tests
     runs-on: ubuntu-latest
@@ -45,7 +49,6 @@ jobs:
           cd ILP/src/client/ilp.client
           npm run build
 
-  # ==================== CI: СЕРВЕР (.NET) ====================
   server-tests:
     name: Server - Tests
     runs-on: ubuntu-latest
@@ -74,7 +77,6 @@ jobs:
           cd ILP/tests/server
           dotnet test --configuration Release --verbosity normal
 
-  # ==================== CD: ДЕПЛОЙ ====================
   deploy:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
@@ -107,6 +109,8 @@ jobs:
           publish_dir: ./ILP/src/client/ilp.client/dist
           publish_branch: gh-pages
           full_commit_message: 'Deploy: ${{ github.event.head_commit.message }}'
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
 
       - name: Deployment info
         run: |
