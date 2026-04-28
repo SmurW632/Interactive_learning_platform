@@ -11,6 +11,8 @@ public static class CorsExtensions
             options.AddPolicy("AllowVueClient", policy =>
             {
                 policy.WithOrigins(
+                        "http://localhost:54114",
+                        "https://localhost:54114",
                         "https://localhost:8080",
                         "http://localhost:8080",
                         "https://localhost:5173",  // Vite

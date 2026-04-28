@@ -40,7 +40,7 @@ async function send() {
   result.value = ''
 
   try {
-    const res = await fetch('https://localhost:5005/api/v1/research/search', {
+    const res = await fetch('http://localhost:5004/api/v1/research/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: query.value })
