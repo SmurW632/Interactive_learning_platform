@@ -14,8 +14,6 @@ const axiosInstance = axios.create({
   timeout: 30000
 })
 
-
-
 // const axiosInstance = axios.create({
 //   baseURL: `${API_URL}/api/v1`,
 //   timeout: 10000
