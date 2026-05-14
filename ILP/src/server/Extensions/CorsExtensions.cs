@@ -11,6 +11,11 @@ public static class CorsExtensions
             options.AddPolicy("AllowVueClient", policy =>
             {
                 policy.WithOrigins(
+                        // GitHub Pages
+                        "https://smurw632.github.io",
+                        "https://smurw632.github.io/Interactive_learning_platform",
+                        "http://smurw632.github.io",
+
                         "http://localhost:54114",
                         "https://localhost:54114",
                         "https://localhost:8080",
@@ -20,7 +25,9 @@ public static class CorsExtensions
                         "https://localhost:3000",   // Альтернативные порты
                         "http://localhost:3000",
                         "https://localhost:5001",   // Сервер для тестов
-                        "http://localhost:5001"
+                        "http://localhost:5001",
+
+                        "https://ilp-backend-re98.onrender.com"
                     )
                     .AllowAnyMethod()
                     .AllowAnyHeader()
