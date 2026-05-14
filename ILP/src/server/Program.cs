@@ -8,6 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5004";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
+// ОТКЛЮЧАЕМ отслеживание файлов в продакшене
+if (builder.Environment.IsProduction())
+{
+    builder.Environment.ContentRootFileProvider = null;
+}
+
 // 2. Добавление базовых сервисов
 builder.Services.AddControllersAndApiExplorer();
 

@@ -1,0 +1,13 @@
+**/bin
+**/obj
+**/node_modules
+**/.git
+**/.vscode
+**/.idea
+**/*.log
+**/*.tmp
+**/Migrations
+ILP/src/client/**
+ILP/tests/**
+ILP/src/py_ai/**
+*.md
