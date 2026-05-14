@@ -12,7 +12,7 @@ using server.Data.DbContexts;
 namespace server.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20260428075709_ILP_Initial")]
+    [Migration("20260510111814_ILP_Initial")]
     partial class ILP_Initial
     {
         /// <inheritdoc />
