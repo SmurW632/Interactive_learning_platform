@@ -1,8 +1,10 @@
 import { useAuthStore } from '@/js/stores/user'
 import axios from 'axios'
 
+const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:5004'
+
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:54114/api/v1',
+  baseURL: `${API_URL}/api/v1`,
   timeout: 10000
 })
 
