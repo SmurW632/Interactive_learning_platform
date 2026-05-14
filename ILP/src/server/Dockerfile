@@ -14,7 +14,7 @@ COPY --from=build /app/publish .
 
 RUN apt-get update && apt-get install -y libgssapi-krb5-2
 
-EXPOSE 8080
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 EXPOSE 8081
 
 ENTRYPOINT ["dotnet", "server.dll"]

@@ -5,7 +5,8 @@ using static server.Constants.AppConstants;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Настройка хоста
-builder.WebHost.UseUrls(Ports.Http);
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5004";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // 2. Добавление базовых сервисов
 builder.Services.AddControllersAndApiExplorer();
