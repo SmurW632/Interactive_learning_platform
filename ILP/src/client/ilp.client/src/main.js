@@ -15,6 +15,11 @@ app.use(router)
 
 app.config.globalProperties.$axios = axios
 
+console.log('NODE_ENV:', process.env.NODE_ENV)
+console.log('Все переменные VUE_APP:', {
+  VUE_APP_API_URL: process.env.VUE_APP_API_URL
+})
+
 // Инициализация auth store после монтирования pinia
 import { useAuthStore } from './js/stores/auth'
 const authStore = useAuthStore()
