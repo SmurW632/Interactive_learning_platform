@@ -3,16 +3,14 @@ import axios from 'axios'
 
 //const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:5004'
 
-const isProduction = window.location.hostname !== 'localhost'
-const baseURL = isProduction
-  ? 'https://ilp-backend-re98.onrender.com/api/v1'   // ✅ URL вашего бэкенда
-  : '/api/v1'
+// const isProduction = window.location.hostname !== 'localhost'
+// const baseURL = isProduction
+//   ? 'https://ilp-backend-re98.onrender.com/api/v1'   // ✅ URL вашего бэкенда
+//   : '/api/v1'
 
-console.log('🌐 [axios] isProduction:', isProduction)
-console.log('🌐 [axios] baseURL:', baseURL)
 
 const axiosInstance = axios.create({
-  baseURL: baseURL,  // для локальной разработки используем прокси
+  baseURL: 'https://ilp-backend-re98.onrender.com/api/v1',  // для локальной разработки используем прокси
   timeout: 30000
 })
 
