@@ -34,7 +34,7 @@ public static class DatabaseFactory
         {
             // Регистрируем PostgreSQL контекст
             services.AddDbContext<PostgresDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("LocalPostgre")));
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<BaseDbContext>(sp => sp.GetRequiredService<PostgresDbContext>());
         }
