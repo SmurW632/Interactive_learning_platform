@@ -2,7 +2,7 @@
   "name": "ilp-client-tests",
   "version": "1.0.0",
   "scripts": {
-    "test": "vitest --run",
+    "test": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {

@@ -45,7 +45,8 @@ jobs:
       - name: Run client tests
         run: |
           cd ILP/tests/client
-          npm test -- --run
+          npm install --legacy-peer-deps
+          npm test
         continue-on-error: false
 
       - name: Build client
