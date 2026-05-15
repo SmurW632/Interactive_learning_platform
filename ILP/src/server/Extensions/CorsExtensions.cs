@@ -22,12 +22,10 @@ public static class CorsExtensions
                         "http://localhost:8080",
                         "https://localhost:5173",  // Vite
                         "http://localhost:5173",
-                        "https://localhost:3000",   // Альтернативные порты
-                        "http://localhost:3000",
+                        "https://localhost:3001",   // Альтернативные порты
+                        "http://localhost:3001",
                         "https://localhost:5001",   // Сервер для тестов
-                        "http://localhost:5001",
-
-                        "https://ilp-backend-re98.onrender.com"
+                        "http://localhost:5001"
                     )
                     .AllowAnyMethod()
                     .AllowAnyHeader()

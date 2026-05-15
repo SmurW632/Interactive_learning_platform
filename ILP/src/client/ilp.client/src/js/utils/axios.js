@@ -1,25 +1,28 @@
-import { useAuthStore } from '@/js/stores/user'
+import { API_BASE_URL } from '@/js/api/api'
+import { useAuthStore } from '@/js/stores/auth'
 import axios from 'axios'
 
-//const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:5004'
-
-// const isProduction = window.location.hostname !== 'localhost'
-// const baseURL = isProduction
-//   ? 'https://ilp-backend-re98.onrender.com/api/v1'   // ✅ URL вашего бэкенда
-//   : '/api/v1'
-
+console.log('🔧 API_BASE_URL:', API_BASE_URL)
 
 const axiosInstance = axios.create({
-  baseURL: 'https://ilp-backend-re98.onrender.com/api/v1',  // для локальной разработки используем прокси
-  timeout: 30000
+  baseURL: API_BASE_URL,
+  timeout: 30000,
+  headers: { 'Content-Type': 'application/json' }
 })
 
-// const axiosInstance = axios.create({
-//   baseURL: `${API_URL}/api/v1`,
-//   timeout: 10000
-// })
+// Добавляем токен в каждый запрос
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
 
-// Interceptor для обработки ошибок авторизации
+// Обработка ошибок
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {

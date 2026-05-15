@@ -27,6 +27,8 @@
 </template>
 
 <script setup>
+import { AI_BASE_URL } from '@/js/api/api'
+import axios from '@/js/utils/axios'
 import { ref } from 'vue'
 
 const query = ref('Найди свежие материалы про AI agents и web search в LLM')
@@ -40,21 +42,15 @@ async function send() {
   result.value = ''
 
   try {
-    const res = await fetch('research/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: query.value })
+    // Прямой запрос к Python сервису (без прокси)
+    const response = await axios.post(`${AI_BASE_URL}/research/search`, {
+      query: query.value
     })
 
-    if (!res.ok) {
-      const text = await res.text()
-      throw new Error(`Ошибка API (${res.status}): ${text}`)
-    }
-
-    const data = await res.json()
-    result.value = data.result ?? ''
+    result.value = response.data.result ?? ''
   } catch (e) {
-    error.value = e.message ?? String(e)
+    error.value = e.response?.data?.message || e.message || 'Ошибка запроса'
+    console.error('Research error:', e)
   } finally {
     loading.value = false
   }
