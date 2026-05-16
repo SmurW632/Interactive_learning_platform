@@ -8,6 +8,10 @@ module.exports = defineConfig({
   assetsDir: 'assets',
   indexPath: 'index.html',
   devServer: {
-    port: 3001
+    port: 3001,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5004',
+        changeOrigin: true,
   }
 })

@@ -7,7 +7,7 @@ const API_BASE_URL = isProduction
 
 const AI_BASE_URL = isProduction
   ? 'https://alicagpt-qjgz.onrender.com'               // Продакшен (Render)
-  : 'http://127.0.0.1:8001'                        // Локальный Python
+  : 'http://127.0.0.1:8001'                         // Локальный Python
 
 export { AI_BASE_URL, API_BASE_URL }
 
