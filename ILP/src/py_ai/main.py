@@ -55,7 +55,7 @@ def research(query: str) -> str:
         input=query,
         tools=[
             {
-                "type": "web_reserch",
+                "type": "web_research",
             }
         ],
         temperature=0.2,
@@ -86,3 +86,11 @@ class ResearchResponse(BaseModel):
 def research_endpoint(req: ResearchRequest):
     result = research(req.query)
     return ResearchResponse(result=result)
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "Yandex AI"}
+
+@app.get("/ping")
+async def ping():
+    return {"status": "ok"}
