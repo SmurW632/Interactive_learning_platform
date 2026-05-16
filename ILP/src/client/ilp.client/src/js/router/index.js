@@ -37,8 +37,12 @@ const routes = [
   }
 ]
 
+const baseUrl = process.env.NODE_ENV === 'production'
+  ? '/Interactive_learning_platform/'  // для GitHub Pages
+  : '/'                                 // для локальной разработки
+
 const router = createRouter({
-  history: createWebHistory(process.env.VUE_APP_API_URL),
+  history: createWebHistory(baseUrl),
   routes
 })
 
