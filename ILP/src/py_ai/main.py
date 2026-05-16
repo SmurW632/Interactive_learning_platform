@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import openai
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 load_dotenv()
@@ -49,13 +50,14 @@ client = openai.OpenAI(
 )
 
 def research(query: str) -> str:
+    # Исправлено: web_reserch -> web_search
     response = client.responses.create(
         model=f"gpt://{YANDEX_FOLDER_ID}/{YANDEX_MODEL}",
         instructions=SYSTEM_PROMPT,
         input=query,
         tools=[
             {
-                "type": "web_research",
+                "type": "web_search",
             }
         ],
         temperature=0.2,
@@ -76,17 +78,22 @@ def research(query: str) -> str:
 
 app = FastAPI(title="ILP Yandex Research Service")
 
-class ResearchRequest(BaseModel):
-    query: str
+# 1. Настройка CORS — РАЗРЕШАЕМ ЗАПРОСЫ С ВАШЕГО ФРОНТЕНДА
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://smurw632.github.io",
+        "https://alicagpt-qjgz.onrender.com",  # Сам сервис
+        "http://localhost:3001",               # Локальная разработка
+        "http://localhost:5004",               # .NET бэкенд
+        "http://localhost:54114",              # Vue локально
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-class ResearchResponse(BaseModel):
-    result: str
-
-@app.post("/research", response_model=ResearchResponse)
-def research_endpoint(req: ResearchRequest):
-    result = research(req.query)
-    return ResearchResponse(result=result)
-
+# 2. Health check endpoints (для Render)
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "Yandex AI"}
@@ -94,3 +101,23 @@ async def health_check():
 @app.get("/ping")
 async def ping():
     return {"status": "ok"}
+
+# 3. Основной эндпоинт для поиска
+class ResearchRequest(BaseModel):
+    query: str
+
+class ResearchResponse(BaseModel):
+    result: str
+
+@app.post("/research")
+async def research_endpoint(req: ResearchRequest):
+    try:
+        result = research(req.query)
+        return ResearchResponse(result=result)
+    except Exception as e:
+        return ResearchResponse(result=f"Ошибка: {str(e)}")
+
+# Дополнительный эндпоинт для совместимости с фронтендом
+@app.post("/research/search")
+async def research_search(req: ResearchRequest):
+    return await research_endpoint(req)
