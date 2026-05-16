@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkilp_client"]=self["webpackChunkilp_client"]||[]).push([[900],{900:function(n,u,l){l.r(u),l.d(u,{default:function(){return a}});var e=l(641);function r(n,u){return(0,e.uX)(),(0,e.CE)("div",null,[...u[0]||(u[0]=[(0,e.Lk)("h1",null,"Главная страница",-1),(0,e.Lk)("p",null,"Добро пожаловать на платформу!",-1)])])}var t=l(262);const c={},i=(0,t.A)(c,[["render",r]]);var a=i}}]);
+//# sourceMappingURL=900.3d318be7.js.map
