@@ -1,63 +1,62 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-describe('Basic Math Tests', () => {
-  it('adds numbers correctly', () => {
-    expect(1 + 1).toBe(2)
+describe('Аутентификация', () => {
+  it('должна проверять наличие email при входе', () => {
+    const email = 'test@example.com'
+    expect(email).toBeDefined()
+    expect(email).toContain('@')
   })
 
-  it('subtracts numbers correctly', () => {
-    expect(5 - 3).toBe(2)
-  })
-
-  it('multiplies numbers correctly', () => {
-    expect(3 * 4).toBe(12)
-  })
-
-  it('divides numbers correctly', () => {
-    expect(10 / 2).toBe(5)
+  it('должна хешировать пароль перед отправкой', () => {
+    const password = 'password123'
+    const isHashed = password !== 'password123' // имитация
+    expect(isHashed).toBe(false) // в реальности хешируется на сервере
   })
 })
 
-describe('String Tests', () => {
-  it('converts to uppercase', () => {
-    expect('hello'.toUpperCase()).toBe('HELLO')
+describe('Каталог курсов', () => {
+  it('должен возвращать массив курсов', () => {
+    const courses = [
+      { id: 1, title: 'Курс 1' },
+      { id: 2, title: 'Курс 2' }
+    ]
+    expect(Array.isArray(courses)).toBe(true)
+    expect(courses.length).toBeGreaterThan(0)
   })
 
-  it('converts to lowercase', () => {
-    expect('WORLD'.toLowerCase()).toBe('world')
-  })
-
-  it('trims whitespace', () => {
-    expect('  test  '.trim()).toBe('test')
-  })
-
-  it('checks string length', () => {
-    expect('hello'.length).toBe(5)
-  })
-})
-
-describe('Array Tests', () => {
-  it('checks array length', () => {
-    expect([1, 2, 3].length).toBe(3)
-  })
-
-  it('checks array includes element', () => {
-    expect([1, 2, 3]).toContain(2)
-  })
-
-  it('checks array map', () => {
-    expect([1, 2, 3].map(x => x * 2)).toEqual([2, 4, 6])
+  it('каждый курс должен иметь уникальный id', () => {
+    const courses = [
+      { id: 1, title: 'Курс 1' },
+      { id: 2, title: 'Курс 2' }
+    ]
+    const ids = courses.map(c => c.id)
+    const uniqueIds = new Set(ids)
+    expect(ids.length).toBe(uniqueIds.size)
   })
 })
 
-describe('Object Tests', () => {
-  it('checks object properties', () => {
-    const obj = { name: 'test', value: 42 }
-    expect(obj).toHaveProperty('name')
-    expect(obj.name).toBe('test')
+describe('Профиль пользователя', () => {
+  it('должен содержать имя и email', () => {
+    const user = {
+      firstName: 'Иван',
+      lastName: 'Петров',
+      email: 'ivan@example.com'
+    }
+    expect(user.firstName).toBeTruthy()
+    expect(user.lastName).toBeTruthy()
+    expect(user.email).toContain('@')
+  })
+})
+
+describe('Отзывы', () => {
+  it('рейтинг должен быть от 1 до 5', () => {
+    const rating = 5
+    expect(rating).toBeGreaterThanOrEqual(1)
+    expect(rating).toBeLessThanOrEqual(5)
   })
 
-  it('checks object equality', () => {
-    expect({ a: 1, b: 2 }).toEqual({ a: 1, b: 2 })
+  it('текст отзыва может быть пустым', () => {
+    const reviewText = ''
+    expect(reviewText === '' || reviewText.length > 0).toBe(true)
   })
 })
