@@ -3,7 +3,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 // Локальная разработка
 const API_BASE_URL = isProduction
   ? 'https://ilp-backend-re98.onrender.com/api/v1'  // Продакшен (Render)
-  : 'http://localhost:3001/api/v1'                  // Локальный бэкенд
+  : 'http://localhost:5004/api/v1'                  // Локальный бэкенд
 
 const AI_BASE_URL = isProduction
   ? 'https://ilp-python.onrender.com'               // Продакшен (Render)
